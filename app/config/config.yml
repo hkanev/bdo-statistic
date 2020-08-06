@@ -40,7 +40,7 @@ twig:
 doctrine:
     dbal:
         driver: pdo_mysql
-        host: '%env(database_host)%'
+        host: '%env(DATABASE_HOST)%'
         port: '%env(database_port)%'
         dbname: '%env(database_name)%'
         user: '%env(database_user)%'
