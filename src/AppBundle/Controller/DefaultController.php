@@ -2,9 +2,14 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Dates;
+use AppBundle\Entity\ItemsPerDay;
+use JMS\Serializer\SerializationContext;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\VarDumper\VarDumper;
 
 class DefaultController extends Controller
 {
@@ -13,9 +18,21 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-        // replace this example code with whatever you need
-        return $this->render('default/index.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
-        ]);
+        $date =  $request->get('date')
+            ? \DateTime::createFromFormat('d/m/Y', $request->get('date'))
+            :   new \DateTime();
+
+        $em =  $this->container->get('doctrine.orm.entity_manager');
+        $day = $em->getRepository(Dates::class)->findOneBy(['date' => $date]);
+
+        if(!$day){
+            return new JsonResponse("No data for today");
+        }
+
+       $entiteis = $em->getRepository(ItemsPerDay::class)->mostSoldItems($day);
+        $serializer = $this->container->get('jms_serializer');
+        $data = $serializer->toArray($entiteis, SerializationContext::create()->setGroups(['items_per_day']));
+
+        return new JsonResponse($data);
     }
 }

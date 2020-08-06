@@ -15,25 +15,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\VarDumper\VarDumper;
 
-class GreetCommand extends ContainerAwareCommand
+class PopulateData extends ContainerAwareCommand
 {
     protected function configure()
     {
         $this
-            ->setName('demo:greet')
-            ->setDescription('Greet someone')
-            ->addArgument(
-                'name',
-                InputArgument::OPTIONAL,
-                'Who do you want to greet?'
-            )
-            ->addOption(
-                'yell',
-                null,
-                InputOption::VALUE_NONE,
-                'If set, the task will yell in uppercase letters'
-            )
-        ;
+            ->setName('populate-data')
+            ->setDescription('Fetch data from bdo whales and populate it into database');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -58,7 +46,8 @@ class GreetCommand extends ContainerAwareCommand
                 ->getQuery()->getOneOrNullResult();
 
             if(!$itemPerDay) {
-                return $this->createItemPerDay($item, $date, $row['lastHour']);
+                 $this->createItemPerDay($item, $date, $row['lastHour']);
+                 continue;
             }
 
             $itemPerDay->setQuantity($itemPerDay->getQuantity() + $row['lastHour']);
@@ -66,6 +55,7 @@ class GreetCommand extends ContainerAwareCommand
         }
 
         $this->getEntityManager()->flush();
+        dump('Done');
     }
 
     protected function getData() {

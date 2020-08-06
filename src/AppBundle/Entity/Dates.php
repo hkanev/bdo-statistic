@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Dates
@@ -14,7 +15,7 @@ class Dates
 {
     /**
      * @var \DateTime
-     *
+     * @Serializer\Groups({"items_per_day"})
      * @ORM\Column(name="date", type="date", nullable=false)
      */
     private $date;
@@ -22,6 +23,7 @@ class Dates
     /**
      * @var integer
      *
+     * @Serializer\Groups({"items_per_day"})
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -56,4 +58,3 @@ class Dates
 
 
 }
-
